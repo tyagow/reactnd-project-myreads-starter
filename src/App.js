@@ -3,8 +3,26 @@ import "./App.css"
 import HomePage from "./containers/HomePage"
 import SearchPage from "./containers/SearchPage"
 import * as BooksAPI from "./BooksAPI"
-import {Route} from "react-router-dom"
+import {  BrowserRouter as Router, Route} from "react-router-dom"
 
+
+export function updateBooks(books, book) {
+    books.map((findBook) => {
+        if (book.id === findBook.id) {
+            findBook.shelf = book.shelf
+        }
+        return findBook
+    })
+    return books
+}
+
+export function pushBook(books, book) {
+    let bookInShelf = books.find((prevBook) => prevBook.id === book.id)
+    if (bookInShelf === undefined) {
+        books.push(book)
+    }
+    return books
+}
 
 class BooksApp extends React.Component {
     constructor() {
@@ -39,33 +57,19 @@ class BooksApp extends React.Component {
         })
     }
     onMoveBook = (book, shelf) => {
-        console.log(book, shelf)
         BooksAPI.update(book, shelf).then((bookId) =>{
             this.setState((prevState) => {
-                let bookInShelf = prevState.books.filter((prevBook) => {
-                    return prevBook.id === book.id
-                })
-                if (bookInShelf.length === 0) {
-                    book.shelf = shelf
-                    prevState.books.push(book)
-                }
+                book.shelf = shelf
+                pushBook(prevState.books, book)
                 return {
-                    books: prevState.books.map((findBook) => {
-                        if (book.id === findBook.id) {
-                            findBook.shelf = shelf
-                        }
-                        return findBook
-                    }),
-                    results: prevState.results.map((findBook) => {
-                        if (book.id === findBook.id) {
-                            findBook.shelf = shelf
-                        }
-                        return findBook
-                    })
+                    books: updateBooks(prevState.books, book, shelf),
+                    results: updateBooks(prevState.results, book, shelf)
                 }
             })
         })
     }
+
+
     componentDidMount() {
         BooksAPI.getAll().then((result) => this.saveBooks(result))
     }
@@ -76,22 +80,24 @@ class BooksApp extends React.Component {
 
     render() {
         return (
-            <div className="app">
-                <Route exact path='/search' render={() => (
-                    <SearchPage
-                        onMoveBook={this.onMoveBook}
-                        searchBooks={this.searchBooks}
-                        results={this.state.results}
+            <Router>
+                <div className="app">
+                    <Route exact path='/search' render={() => (
+                        <SearchPage
+                            onMoveBook={this.onMoveBook}
+                            searchBooks={this.searchBooks}
+                            results={this.state.results}
+                        />
+                    )} />
+                    <Route exact path='/' render={() => (
+                        <HomePage
+                            onMoveBook={this.onMoveBook}
+                            books={this.state.books}
+                        />
+                    )}
                     />
-                )} />
-                <Route exact path='/' render={() => (
-                    <HomePage
-                        onMoveBook={this.onMoveBook}
-                        books={this.state.books}
-                    />
-                )}
-                />
-            </div>
+                </div>
+            </Router>
         )
     }
 
