@@ -35,7 +35,6 @@ class BooksApp extends React.Component {
     }
     searchBooks = (e) => {
         const query = e.target.value.trim()
-        console.log('fazendo pesquisa')
         BooksAPI.search(query, 40).then((results) => {
             if (results.length) {
                 this.setState((prevState) => {
