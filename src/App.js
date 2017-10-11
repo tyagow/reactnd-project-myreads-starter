@@ -5,7 +5,6 @@ import SearchPage from "./containers/SearchPage"
 import * as BooksAPI from "./BooksAPI"
 import {  BrowserRouter as Router, Route} from "react-router-dom"
 
-
 export function updateBooks(books, book) {
     books.map((findBook) => {
         if (book.id === findBook.id) {

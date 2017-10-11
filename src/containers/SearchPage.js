@@ -1,12 +1,10 @@
-import React, {Component} from "react";
+import React, {PureComponent} from "react";
 import { Link } from "react-router-dom";
 import PropTypes from 'prop-types'
 import Bookshelf from "../components/Bookshelf";
 import { Debounce } from 'react-throttle'
 
-
-
-class SearchPage extends Component {
+class SearchPage extends PureComponent {
 
     static propTypes = {
         onMoveBook: PropTypes.func.isRequired,
@@ -22,7 +20,10 @@ class SearchPage extends Component {
                     <Link className="close-search" to="/">Close</Link>
                     <div className="search-books-input-wrapper">
                         <Debounce time='300' handler='onChange'>
-                            <input type="text" onChange={this.props.searchBooks} placeholder="Search by title or author"/>
+                            <input type="text"
+                                   onChange={this.props.searchBooks}
+                                   placeholder="Search by title or author"
+                            />
                         </Debounce>
                     </div>
                 </div>
