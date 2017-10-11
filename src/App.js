@@ -24,14 +24,15 @@ export function pushBook(books, book) {
 }
 
 class BooksApp extends React.Component {
+
     constructor() {
         super()
         this.state = {
             books: [],
             results: []
         }
-
     }
+
     searchBooks = (e) => {
         const query = e.target.value.trim()
         BooksAPI.search(query, 40).then((results) => {
@@ -47,26 +48,21 @@ class BooksApp extends React.Component {
                     }
                 })
             }
-            else {
-                console.log('Error results')
-            }
         }).catch((data) => {
-            console.log('Unable to search "' + query + '"' + data)
-        })
-    }
-    onMoveBook = (book, shelf) => {
-        BooksAPI.update(book, shelf).then((bookId) =>{
-            this.setState((prevState) => {
-                book.shelf = shelf
-                pushBook(prevState.books, book)
-                return {
-                    books: updateBooks(prevState.books, book, shelf),
-                    results: updateBooks(prevState.results, book, shelf)
-                }
-            })
         })
     }
 
+    onMoveBook = (book, shelf) => {
+        this.setState((prevState) => {
+            book.shelf = shelf
+            pushBook(prevState.books, book)
+            return {
+                books: updateBooks(prevState.books, book, shelf),
+                results: updateBooks(prevState.results, book, shelf)
+            }
+        })
+        BooksAPI.update(book, shelf)
+    }
 
     componentDidMount() {
         BooksAPI.getAll().then((result) => this.saveBooks(result))
@@ -98,7 +94,6 @@ class BooksApp extends React.Component {
             </Router>
         )
     }
-
 }
 
 export default BooksApp
